@@ -1,0 +1,2145 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>testing on Nigel Swab</title>
+    <link>https://nigelswab.github.io/tags/testing/</link>
+    <description>Recent content in testing on Nigel Swab</description>
+    <generator>Source Themes academia (https://sourcethemes.com/academic/)</generator>
+    <language>en-us</language>
+    <copyright>Copyright &amp;copy; {year}</copyright>
+    <lastBuildDate>Fri, 06 Aug 2021 00:00:00 +0000</lastBuildDate>
+    
+	    <atom:link href="https://nigelswab.github.io/tags/testing/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Thrust Tester Load Investigation</title>
+      <link>https://nigelswab.github.io/project/thrust_tester_load_investigation/</link>
+      <pubDate>Fri, 06 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://nigelswab.github.io/project/thrust_tester_load_investigation/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Disclaimer:&lt;/strong&gt; &lt;em&gt;This was internal documentation that has been converted
+from Zaber&amp;rsquo;s internalwiki. Some information may have been removed, and
+references to other wiki pages are not publicly available. This 
+page may also contain some odd formatting.&lt;/em&gt;&lt;/p&gt;
+&lt;h1 id=&#34;devr-test-and-fixturelrt-thrust-speed2021-08-06---thrust-speed-high-speed-load-logging-investigation&#34;&gt;Dev/R-Test and Fixture/LRT Thrust Speed/2021-08-06 - Thrust Speed High Speed Load Logging Investigation&lt;/h1&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Product&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;R-Test and Fixture&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Test Attributes&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Thrust&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Tester&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Nigel&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Plan Reviewed by&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Nathan P&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Report Reviewed by&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Nathan P&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Test Date&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;2021-08-06&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;abstract&#34;&gt;Abstract&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;While improving our thrust testing setup, we decided to evaluate how peak thrust for a given test speed is determined&lt;/li&gt;
+&lt;li&gt;It was found that an average thrust from a successful pass provides a more representative peak thrust value than the minimum thrust from a successful pass given cyclical thrust fluctuations
+&lt;ul&gt;
+&lt;li&gt;It was also found that the LRT Thrust Tester provided less thrust fluctuation than the LST Thrust tester, essentially eliminating larger thrust oscillations&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;It&amp;rsquo;s recommended that the testing team continue to log high speed thrust passes to gather more data and investigate any odd fluctuations further&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;We are currently in the process of improving our thrust speed tester/setup&lt;/li&gt;
+&lt;li&gt;Currently, the maximum thrust for a given speed is determined by taking the minimum load recorded in a successful thrust pass
+&lt;ul&gt;
+&lt;li&gt;However, this may not be an ideal way of determining a stages thrust capacity at a given speed&lt;/li&gt;
+&lt;li&gt;Therefore, the standard thrust speed script was modified to create &amp;ldquo;high speed logs&amp;rdquo; of the recorded load cell reading and elapsed time throughout the loop in the &amp;ldquo;move_and_detect_stall&amp;rdquo; method
+&lt;ul&gt;
+&lt;li&gt;Results of the highest recorded successful pass, and the stalling pass, will be published in Resulty&lt;/li&gt;
+&lt;li&gt;Depending on results, future modifications to the script may be made to include the ability to record high speed logs of either successful or stalling passes based on the settings defined by the config file&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;The LRT thrust tester has been modified to resemble the LST thrust tester (converted to peripheral) and now uses the same Python script
+&lt;ul&gt;
+&lt;li&gt;LRT&amp;rsquo;s should provide improved thrust testing capacity (speed, load, and travel) over the LST&amp;rsquo;s&lt;/li&gt;
+&lt;li&gt;It may be interesting to evaluate if there is any difference between load variation on the LRT vs. the LST thrust tester&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;purpose&#34;&gt;Purpose&lt;/h2&gt;
+&lt;hr&gt;
+&lt;p&gt;To gather data and evaluate the determination of maximum thrust in our thrust_speed.py scripts&lt;/p&gt;
+&lt;h2 id=&#34;method&#34;&gt;Method&lt;/h2&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;equipment&#34;&gt;Equipment&lt;/h3&gt;
+&lt;table&gt;
+&lt;colgroup&gt;
+&lt;col style=&#34;width: 39%&#34; /&gt;
+&lt;col style=&#34;width: 60%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th colspan=&#34;2&#34;&gt;&lt;strong&gt;Test Equipment&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Devices:&lt;/td&gt;
+&lt;td&gt;&lt;ul&gt;
+&lt;li&gt;
+X-LSM200B-E03 - 55350
+&lt;/li&gt;
+&lt;li&gt;
+X-LSQ150D-E01 - 60493
+&lt;/li&gt;
+&lt;li&gt;
+X-LSQ600A-E01 - 50144
+&lt;/li&gt;
+&lt;/ul&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;Firmware&lt;/td&gt;
+&lt;td&gt;&lt;ul&gt;
+&lt;li&gt;
+LSM - 6.32.1601
+&lt;/li&gt;
+&lt;li&gt;
+LSQ - 7.22.10079
+&lt;/li&gt;
+&lt;/ul&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Load Cell:&lt;/td&gt;
+&lt;td&gt;250 lbs&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;Spring Assembly #:&lt;/td&gt;
+&lt;td&gt;&lt;ul&gt;
+&lt;li&gt;
+LSM200B: # 3 - 120 N
+&lt;/li&gt;
+&lt;li&gt;
+LSQ150D: # 3 - 120 N
+&lt;/li&gt;
+&lt;li&gt;
+LSQ600A: #1 - 817 N
+&lt;/li&gt;
+&lt;/ul&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Power Supply:&lt;/td&gt;
+&lt;td&gt;White BK Precision&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;settings&#34;&gt;Settings&lt;/h3&gt;
+&lt;table&gt;
+&lt;colgroup&gt;
+&lt;col style=&#34;width: 49%&#34; /&gt;
+&lt;col style=&#34;width: 50%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th colspan=&#34;2&#34;&gt;&lt;strong&gt;Test Settings&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Closed Loop:&lt;/td&gt;
+&lt;td&gt;Enabled&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;Run current:&lt;/td&gt;
+&lt;td&gt;default&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Test Voltage (V):&lt;/td&gt;
+&lt;td&gt;48 V&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;Thrust limit (N):&lt;/td&gt;
+&lt;td&gt;Spring Maximum&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Speed range (mm/s):&lt;/td&gt;
+&lt;td&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;LSM: 2 - 100&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;LSQ150D: 2 - 100&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;LSQ600A: 2 - 53&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;Number of data points:&lt;/td&gt;
+&lt;td&gt;10&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Starting Force:&lt;/td&gt;
+&lt;td&gt;5 N&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;Fine Force Increment:&lt;/td&gt;
+&lt;td&gt;1 N&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;code&#34;&gt;Code&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://gitlab.izaber.com/testing/general_testing_scripts/blob/master/torque_and_thrust/LST_tester/thrust_speed.py&#34;&gt;&lt;u&gt;thrust_speed.py&lt;/u&gt;&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;Initial testing done/based off of LRT_thrust_high_speed branch with the commit hash of 78b8084b9a308a551bac0a268c6cc60abc716baf&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://gitlab.izaber.com/testing/general_testing_scripts/blob/master/torque_and_thrust/LST_tester/Default%20LST%20Thrust%20Speed%20Config.yaml&#34;&gt;&lt;u&gt;Default LST Thrust Speed Config.yaml&lt;/u&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;procedure&#34;&gt;Procedure&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; &lt;em&gt;I was unable to export this section from the wiki&lt;/em&gt;&lt;/p&gt;
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image1.jpeg&#34; &gt;
+      &lt;img src=&#34;media/image1.jpeg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Test Setup&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&#34;results-and-analysis&#34;&gt;Results and Analysis&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;To view the raw data from this report, search this page&amp;rsquo;s heading (Dev/R-Test and Fixture/LRT Thrust Speed/2021-08-06 - Thrust Speed High Speed Load Logging Investigation) in Resulty&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;initial-testing&#34;&gt;Initial Testing&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Initial testing showed cyclical fluctuations around a fairly consistent thrust value at each speed.
+&lt;ul&gt;
+&lt;li&gt;It was noted that these fluctuations were larger than desired, especially for the LSM, spurring further investigation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;It was also found that the recording speed through a thrust pass was too slow (0.2-0.4 seconds between readings)
+&lt;ul&gt;
+&lt;li&gt;As a result, the thrust_speed.py script was re-worked to increase reading speed&lt;/li&gt;
+&lt;li&gt;A normalized* thrust column was also added to aid with future comparisons/evaluations
+&lt;ul&gt;
+&lt;li&gt;Thrust was normalized by dividing each recorded thrust value by that passes average thrust value (not actual normalization)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Position of the stage was also added to the recorded value to aid with comparisons and evaluations&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;details-and-plots-for-initial-testing&#34;&gt;Details and Plots for Initial Testing&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Initial tests with the LST Thrust Tester show that load varies fairly significantly throughout a run, but tends to vary around a fairly consistent level
+&lt;ul&gt;
+&lt;li&gt;This means that an average of the pass, especially at lower speeds, is likely a better representation of the stages capabilities&lt;/li&gt;
+&lt;li&gt;This also means that it may be worth investigating methods to smooth/dampen the load variation throughout a pass
+&lt;ul&gt;
+&lt;li&gt;Too much fluctuation in load may cause premature stalls and result in lower representative results&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Initial testing also showed that stalls happened primarily at the start of the pass
+&lt;ul&gt;
+&lt;li&gt;These were all stage stalls, not load cell readings out of the threshold&lt;/li&gt;
+&lt;li&gt;This could be due to stalling during acceleration (in which case, acceleration can be decreased to attain sustained thrust)&lt;/li&gt;
+&lt;li&gt;This could also be due to simply overloading the stage, causing it to stall right away as it&amp;rsquo;s limit has been reached&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Subsequent testing was done with 5 data/speed points to reduce testing time and data &amp;ldquo;spam&amp;rdquo; in Resulty&lt;/li&gt;
+&lt;li&gt;It&amp;rsquo;s also notable that time between measurements is 0.2-0.4 seconds, which is much longer than ideal (as seen in LSQ150D testing)
+&lt;ul&gt;
+&lt;li&gt;This could lead to inaccurate or inconsistent measurements&lt;/li&gt;
+&lt;li&gt;This could also pose a problem for preventing damage to stages and load cells when stage stall detection is delayed&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;The script was updated/optimized for recording speed, as detailed in &lt;a href=&#34;https://iwiki.izaber.com/Dev/R-Test_and_Fixture/LRT_Thrust_Speed#2021-08-09_-_Move_and_Detect_Stall_Optimization&#34;&gt;&lt;u&gt;Dev/R-Test and Fixture/LRT Thrust Speed#2021-08-09 - Move and Detect Stall Optimization&lt;/u&gt;&lt;/a&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;The faster script was used for all testing after the initial LSQ150D testing&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;It&amp;rsquo;s likely reasonable to return the average load from a thrust pass that hasn&amp;rsquo;t stalled (instead of the minimum value)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;br&gt;
+&lt;h3 id=&#34;cyclical-fluctuation-investigation---lst-thrust-tester&#34;&gt;Cyclical Fluctuation Investigation - LST Thrust Tester&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Tests were run with the updated thrust_speed.py script (with improved recording speed, normalized thrust values, and stage position readings)&lt;/li&gt;
+&lt;li&gt;It was found that the oscillations in thrust strongly correlate with stage position for the LSM200B and LSQ600A
+&lt;ul&gt;
+&lt;li&gt;However, the larger oscillation&amp;rsquo;s frequency (relative to position) don&amp;rsquo;t seem to directly correlate with stage pitch&lt;/li&gt;
+&lt;li&gt;Interestingly, the LSQ150D also showed a larger frequency at low speeds that wasn&amp;rsquo;t seen at any other speed or stage&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;LST Thrust Tester Speed Comparison&lt;/strong&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;
+&lt;div class=&#34;row justify-content-center&#34;&gt;
+
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image2.gif&#34; &gt;
+      &lt;img src=&#34;media/image2.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;LSM200B&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image3.gif&#34; &gt;
+      &lt;img src=&#34;media/image3.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;LSQ150D&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image4.gif&#34; &gt;
+      &lt;img src=&#34;media/image4.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;LSQ600A&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;As can be seen below, it appears that the LSM200B and LSQ600A have a similar oscillations relative to stage position&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;This suggests that the thrust tester may be the cause of these oscillation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image5.gif&#34; &gt;
+      &lt;img src=&#34;media/image5.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;LST Thrust Tester Stage Comparison&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;ul&gt;
+&lt;li&gt;It was also confirmed that the springs did not have a large effect on oscillations:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image6.gif&#34; &gt;
+      &lt;img src=&#34;media/image6.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Spring Assembly Comparison&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;br&gt;
+&lt;h3 id=&#34;cyclical-fluctuation-investigation---lrt-thrust-tester&#34;&gt;Cyclical Fluctuation Investigation - LRT Thrust Tester&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;When these tests were repeated on the LRT thrust tester, a noticeable improvement in thrust fluctuation can be seen on the LSM (with only ±~2% thrust vs. ±~7%)
+&lt;ul&gt;
+&lt;li&gt;Larger oscillations on the LSQ&amp;rsquo;s seem to also be removed/reduced, but with much less magnitude than the LSM&lt;/li&gt;
+&lt;li&gt;The total span of thrust fluctuation actually remains fairly similar for the two LSQ&amp;rsquo;s, with a slight improvement on the LSQ150D&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;This further suggests that the larger oscillations seen previously were a result of the LST Thrust Tester&lt;/li&gt;
+&lt;li&gt;However, there does seem to be some odd random fluctuation occurring on the LSQ600A, causing a larger span of thrust fluctuation at lower speeds relative to the LST thrust tester
+&lt;ul&gt;
+&lt;li&gt;A follow-up (mini) investigation can be seen further below&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;LRT Thrust Tester Speed Comparison&lt;/strong&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;
+&lt;div class=&#34;row justify-content-center&#34;&gt;
+
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image7.gif&#34; &gt;
+      &lt;img src=&#34;media/image7.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;LSM200B&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image8.gif&#34; &gt;
+      &lt;img src=&#34;media/image8.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;LSQ150D&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image9.gif&#34; &gt;
+      &lt;img src=&#34;media/image9.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;LSQ600A&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;When comparing stages, there were no common frequencies were noticeable, suggesting that the LRT Thrust Tester does not introduce significant thrust fluctuation into the test results&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Interestingly, thrust fluctuation frequency with respect to position seemed to be inversely correlated to leadscrew pitch&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Honestly not sure what would be causing the fluctuations&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image13.gif&#34; &gt;
+      &lt;img src=&#34;media/image13.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;LRT Thrust Tester Stage Comparison&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;br&gt;
+&lt;h3 id=&#34;random-fluctuation-in-lsq600a---mini-investigation&#34;&gt;Random Fluctuation in LSQ600A - Mini Investigation&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;I initially speculated that the odd fluctuation in thrust seen on the LRT Thrust Tester when testing the LSQ600A is caused by the thrust tester
+&lt;ul&gt;
+&lt;li&gt;This is only really based on the fact that nothing similar was present in the other stages tested on the LRT thrust tester&lt;/li&gt;
+&lt;li&gt;However, the load is much higher for the LSQ600A, which may make a large difference&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Thinking that it may be due to how the stage was mounted on the breadboard, I repeated the test with two mounting methods/mounting block positions&lt;/li&gt;
+&lt;/ul&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Method 1&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Method 2&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image14.jpeg&#34; &gt;
+      &lt;img src=&#34;media/image14.jpeg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image15.jpeg&#34; &gt;
+      &lt;img src=&#34;media/image15.jpeg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;ul&gt;
+&lt;li&gt;However, it was found to have little to no effect on the results.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image16.gif&#34; &gt;
+      &lt;img src=&#34;media/image16.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Mounting Method Comparison&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Unfortunately, that brings me to the end of my co-op term, so further investigation will likely be needed
+&lt;ul&gt;
+&lt;li&gt;I would suggest that the testing team periodically records and analyses the high speed thrust logging while doing thrust tests in the future to gather more data&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;I have started a full travel test with LRT Thrust Tester position being recorded as well for more insight&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;It was found that using the average thrust from a successful pass likely provides a more representative peak thrust value for a stage than the lowest recorded thrust value
+&lt;ul&gt;
+&lt;li&gt;Changes in the script should be implemented to reflect this&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;It was also found that the LST thrust tester seemed to be introducing some larger cyclical thrust fluctuations
+&lt;ul&gt;
+&lt;li&gt;However, on the LRT thrust tester, there are only smaller fluctuations that are likely a combination of LRT thrust tester and test stage velocity stability.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;evaluation-and-recommendations&#34;&gt;Evaluation and Recommendations&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;High speed thrust passes should continue to be logged and monitored to gather more data
+&lt;ul&gt;
+&lt;li&gt;This may also provide insight on thrust&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>LSM Stiffness Test - Recirculating Bearing Stiffness for Specs</title>
+      <link>https://nigelswab.github.io/project/lsm-stiffness-test/</link>
+      <pubDate>Sat, 13 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://nigelswab.github.io/project/lsm-stiffness-test/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Disclaimer:&lt;/strong&gt; &lt;em&gt;This was internal documentation that has been converted
+from Zaber&amp;rsquo;s internalwiki. Some information may have been removed, and
+references to other wiki pages are not publicly available. This 
+page may also contain some odd formatting.&lt;/em&gt;&lt;/p&gt;
+&lt;h1 id=&#34;devr-lsm2021-03-13---recirculating-bearing-stiffness-for-specs&#34;&gt;Dev/R-LSM/2021-03-13 - Recirculating Bearing Stiffness for Specs&lt;/h1&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Product&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;R-LSM&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Test Attributes&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Stiffness&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Tester&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Nigel&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Plan Reviewed by&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Nathan P&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Report Reviewed by&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Nathan P&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Test Date&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;2021/04/21&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;abstract&#34;&gt;Abstract&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;The updated LSM design with recirculating bearings was tested for stiffness in pitch,roll, and yaw
+
+&lt;div class=&#34;lightbox image style1 right sm&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/yaw.jpg&#34; &gt;
+      &lt;img src=&#34;media/yaw.jpg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;&lt;a href=&#39;https://www.zaber.com/products/linear-stages/X-LSM&#39; target=&#39;_blank&#39;&gt;X-LSM025B&lt;/a&gt;&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;The previous generation LSM&#39;s used cam follower bearings, as shown here&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;5 stages were tested and all surpassed the recommended new specifications of 150 Nm/°&lt;/li&gt;
+&lt;li&gt;All stiffness testing results show there should be no issues increasing stiffness specifications to 150 Nm/°
+&lt;ul&gt;
+&lt;li&gt;However, I suspect 150 Nm/° may be fairly conservative for properly torqued stage top bolts, especially in pitch&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;The LSM has been redesigned with recirculating bearings&lt;/li&gt;
+&lt;li&gt;The installed rails are not from our new supplier (that should in theory be better)
+&lt;ul&gt;
+&lt;li&gt;We are using the &amp;ldquo;best bad rail&amp;rdquo; we have with the expectation that the new rail will be as good or better&lt;/li&gt;
+&lt;li&gt;When we get the production rail, we will exchange the rails in two stages and quickly retest them to confirm the specs from the old batch of rail are still valid.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;While these stages are 99.5% production ready, anything fishy should be noted&lt;/li&gt;
+&lt;li&gt;Mark has recommended updated specifications of 150 Nm/° here: &lt;a href=&#34;https://iwiki.izaber.com/Dev/R-LSM/Recirculating_Bearing_Design#2021-05-07_Published_Stiffness_Specs&#34;&gt;&lt;u&gt;https://iwiki.izaber.com/Dev/R-LSM/Recirculating_Bearing_Design#2021-05-07_Published_Stiffness_Specs&lt;/u&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Previous stiffness tests have been done with the new design consistently showing high stiffness:
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://iwiki.izaber.com/Dev/R-LSM/2020-07-28_-_Recirculating_Stiffness&#34;&gt;&lt;u&gt;https://iwiki.izaber.com/Dev/R-LSM/2020-07-28_-_Recirculating_Stiffness&lt;/u&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://iwiki.izaber.com/Dev/R-LSM/2020-11-16_-_Recirculating_Bearing_Stiffness&#34;&gt;&lt;u&gt;https://iwiki.izaber.com/Dev/R-LSM/2020-11-16_-_Recirculating_Bearing_Stiffness&lt;/u&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://iwiki.izaber.com/Dev/R-LSM/2021-01-05_-_High_Pre-Load_Recirculating_Stiffness&#34;&gt;&lt;u&gt;https://iwiki.izaber.com/Dev/R-LSM/2021-01-05_-_High_Pre-Load_Recirculating_Stiffness&lt;/u&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://iwiki.izaber.com/Dev/R-LSM/2021-01-27_-_Loaded_Recirc_Mid-Lifetime_Stiffness&#34;&gt;&lt;u&gt;https://iwiki.izaber.com/Dev/R-LSM/2021-01-27_-_Loaded_Recirc_Mid-Lifetime_Stiffness&lt;/u&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;purpose&#34;&gt;Purpose&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;Establish specs for the new LSM design with recirculating bearings&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;method&#34;&gt;Method&lt;/h2&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;equipment&#34;&gt;Equipment&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Test Equipment&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Devices:&lt;/td&gt;
+&lt;td&gt;See below&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Load cell&lt;/td&gt;
+&lt;td&gt;Omega 250 lb with U6 Labjack DAQ&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Measurement Device:&lt;/td&gt;
+&lt;td&gt;Heidenhain&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Forcing Stage:&lt;/td&gt;
+&lt;td&gt;A-LST0250A&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;LSM200B&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;LSM200B&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;LSM200B&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;X-LSM200A&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;X-LSM200A&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Motor/Controller Assembly&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;M-3PO&lt;/td&gt;
+&lt;td&gt;TT-40&lt;/td&gt;
+&lt;td&gt;TC-14&lt;/td&gt;
+&lt;td&gt;WAC-47&lt;/td&gt;
+&lt;td&gt;T3-M4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Base Assembly&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;R5-D4&lt;/td&gt;
+&lt;td&gt;ZZ-4Z&lt;/td&gt;
+&lt;td&gt;T3-H8&lt;/td&gt;
+&lt;td&gt;R2-KT&lt;/td&gt;
+&lt;td&gt;HK-47&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Lead Screw&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;C-21&lt;/td&gt;
+&lt;td&gt;0-0-0&lt;/td&gt;
+&lt;td&gt;2-1B&lt;/td&gt;
+&lt;td&gt;FA-4&lt;/td&gt;
+&lt;td&gt;GH-7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Device Name&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;M-3PO R5-D4 C-21&lt;/td&gt;
+&lt;td&gt;TT-40 ZZ-4Z 0-0-0&lt;/td&gt;
+&lt;td&gt;TC-14 T3-H8 2-1B&lt;/td&gt;
+&lt;td&gt;WAC-47 R2-KT FA-4&lt;/td&gt;
+&lt;td&gt;T3-M4 HK-47 GH-7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Serial Number&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;4000000029&lt;/td&gt;
+&lt;td&gt;4000000030&lt;/td&gt;
+&lt;td&gt;4000000031&lt;/td&gt;
+&lt;td&gt;4000000032&lt;/td&gt;
+&lt;td&gt;4000000034&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;settings&#34;&gt;Settings&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Test Settings&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Repetitions:&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Max Torque (Nm):&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Move Increment (µm):&lt;/td&gt;
+&lt;td&gt;15&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;code&#34;&gt;Code&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://gitlab.izaber.com/testing/general_testing_scripts/blob/master/stiffness/torsional_stiffness.py&#34;&gt;&lt;u&gt;torsional_stiffness.py&lt;/u&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://gitlab.izaber.com/testing/general_testing_scripts/blob/master/stiffness/Default_Stiffness_Config.yaml&#34;&gt;&lt;u&gt;Default_Stiffness_Config.yaml&lt;/u&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;procedure&#34;&gt;Procedure&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; &lt;em&gt;I was unable to export this section from the wiki&lt;/em&gt;
+
+&lt;div class=&#34;row justify-content-center&#34;&gt;
+
+
+&lt;div class=&#34;col-8 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/pitch.jpg&#34; &gt;
+      &lt;img src=&#34;media/pitch.jpg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Pitch Stiffness Setup&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/roll.jpg&#34; &gt;
+      &lt;img src=&#34;media/roll.jpg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Roll Stiffness Setup&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/yaw.jpg&#34; &gt;
+      &lt;img src=&#34;media/yaw.jpg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Yaw Stiffness Setup&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;h2 id=&#34;results-and-analysis&#34;&gt;Results and Analysis&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;All stages exceeded 150 Nm/° in pitch, roll, and stiffness&lt;/li&gt;
+&lt;li&gt;It was found that some stage tops had lower than spec torque on the bolts
+&lt;ul&gt;
+&lt;li&gt;Not all stage top bolts were checked for torque, therefore some results may be artificially low&lt;/li&gt;
+&lt;li&gt;Only the bolded results below were found after stage top bolts were torque to the specified 0.6 Nm&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Device Serial&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Pitch [Nm/°]&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Roll [Nm/°]&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Yaw [Nm/°]&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;4000000029&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;230.4&lt;/td&gt;
+&lt;td&gt;202.5&lt;/td&gt;
+&lt;td&gt;167.1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;4000000030&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;228&lt;/td&gt;
+&lt;td&gt;181.2&lt;/td&gt;
+&lt;td&gt;232.7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;4000000031&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;218.9&lt;/td&gt;
+&lt;td&gt;177.3&lt;/td&gt;
+&lt;td&gt;187&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;4000000032&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;234.3&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;156.5&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;199.2&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;4000000034&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;234.9&lt;/td&gt;
+&lt;td&gt;166.9&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;213.9&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Statistics&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;MAX&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;234.9&lt;/td&gt;
+&lt;td&gt;202.5&lt;/td&gt;
+&lt;td&gt;232.7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;MIN&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;218.9&lt;/td&gt;
+&lt;td&gt;156.5&lt;/td&gt;
+&lt;td&gt;167.1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Average&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;229.3&lt;/td&gt;
+&lt;td&gt;176.88&lt;/td&gt;
+&lt;td&gt;199.98&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Std. Deviation&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;5.79&lt;/td&gt;
+&lt;td&gt;15.4&lt;/td&gt;
+&lt;td&gt;22.4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;
+&lt;div class=&#34;row justify-content-center&#34;&gt;
+
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image1.gif&#34; &gt;
+      &lt;img src=&#34;media/image1.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Pitch Stiffness&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image2.gif&#34; &gt;
+      &lt;img src=&#34;media/image2.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Roll Stiffness&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image3.gif&#34; &gt;
+      &lt;img src=&#34;media/image3.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Yaw Stiffness&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;All stages surpassed the recommended stiffness of 150 Nm/°&lt;/li&gt;
+&lt;li&gt;These results, along with previous testing, suggest that 150 Nm/° stiffness would be a reasonable spec for pitch, roll, and yaw&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;evaluation-and-recommendations&#34;&gt;Evaluation and Recommendations&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;As noted, a couple of the stages were found to have stage top bolts below specified torque
+&lt;ul&gt;
+&lt;li&gt;Only the stages that had initial results significantly lower than expected had their bolts re-torqued&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Once final production models are being tested, it may be worth re-evaluating stiffness specs
+&lt;ul&gt;
+&lt;li&gt;I suspect that 150 Nm/° would be on the conservative side for properly torqued stage tops, especially in pitch&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;For future stiffness tests, it&amp;rsquo;s recommended that we use the laser cut breadboard blocks I made to consistently reposition the loading stage assembly (See below)
+&lt;ul&gt;
+&lt;li&gt;This saved me a lot of time once implemented due to the repetitive nature of testing 5 stages with 3 loading orientations&lt;/li&gt;
+&lt;li&gt;This has been added to the procedures
+
+&lt;div class=&#34;row justify-content-center&#34;&gt;
+
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image4.jpeg&#34; &gt;
+      &lt;img src=&#34;media/image4.jpeg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Laser Cut Breadboard Blocks&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>High-Speed Camera and Lighting System</title>
+      <link>https://nigelswab.github.io/project/heart-valve-highspeed-camera-system/</link>
+      <pubDate>Thu, 31 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://nigelswab.github.io/project/heart-valve-highspeed-camera-system/</guid>
+      <description>&lt;h1 id=&#34;overview&#34;&gt;Overview&lt;/h1&gt;
+
+&lt;div class=&#34;lightbox image style1 right sm&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;Results/front-view-thin.png&#34; &gt;
+      &lt;img src=&#34;Results/front-view-thin.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Early Accelerated Wear Tester Prototype&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;(details blurred to retain confidentiality)&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;p&gt;High-speed video is an integral part of prosthetic heart valve durability
+testing, especially given the updates in 
+&lt;a href=&#34;https://www.iso.org/standard/77033.html&#34; target=&#34;_blank&#34;&gt;ISO 5840-1:2021&lt;/a&gt; 
+that place greater emphasis on leaflet kinematics. As such, 
+one of my responsibilities while on co-op at 
+&lt;a href=&#34;https://vivitrolabs.com/&#34; target=&#34;_blank&#34;&gt;Vivitro Labs&lt;/a&gt; 
+was to design and specify a high-speed camera system for a new Accelerated 
+Wear Tester (AWT) that could be efficiently transferred between testing units 
+with consistent valve framing and image quality. By the end of my co-op term, 
+I had specified a lens for aortic valves, designed and tested multiple 
+camera mounting and lighting prototypes, and refined camera and 
+light mounting designs. Although done in parallel, this project can 
+be broken into two main components:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Camera System&lt;/strong&gt; - encompasses the specification of a lens 
+and the design of mounting for an 
+&lt;a href=&#34;https://www.aostechnologies.com/fileadmin/user_upload/PDFs/Process_Monitoring/AOS_Promon_U1000_en_2017_web.PDF&#34; target=&#34;_blank&#34;&gt;AOS PROMON U1000&lt;/a&gt;
+high-speed video camera. &lt;strong&gt;
+&lt;a href=&#34;Work Term 4 Final Report - Camera Mount Design.pdf&#34; target=&#34;_blank&#34;&gt;(Full report on camera mounting here)&lt;/a&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Lighting System&lt;/strong&gt; - includes the specification and layout
+of LEDs, collaboration on a PCB, and the design of mounting.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;background&#34;&gt;Background&lt;/h1&gt;
+&lt;p&gt;Medical devices can be vital to treating patients with 
+cardiovascular disease; any failure can have life-altering 
+consequences. Vivitro Labs is a company dedicated to reducing the risk 
+to patients by developing cardiovascular device testing equipment, 
+offering laboratory testing, and providing consulting services.
+While working at Vivitro as a Mechanical Engineering Co-op, my time 
+was primarily spent contributing to the development of a new prosthetic 
+heart valve durability tester.&lt;/p&gt;
+&lt;h2 id=&#34;prosthetic-heart-valve-durability-testing&#34;&gt;Prosthetic Heart Valve Durability Testing&lt;/h2&gt;
+&lt;p&gt;
+&lt;div class=&#34;row justify-content-center&#34;&gt;
+
+
+&lt;div class=&#34;col-9 align-self-start&#34;&gt;
+
+Durability testing is one of the most inherently expensive and time-consuming 
+processes of heart valve development. Testing must adhere to ISO 5840 and 17025
+testing standards and demonstrate that prosthetics will remain functional for 
+200-400 million cycles under specific operational conditions. The use of 
+Accelerated Wear Testers (AWT&amp;rsquo;s) reduces the time and cost of these tests.&lt;/p&gt;
+&lt;p&gt;Although Vivitro currently sells an AWT, the HiCycle, design limitations
+and advances in the market have led them to begin developing a new AWT 
+with cycling speeds 300-2100 BPM, or 5-35 Hz. While capable of higher speeds, 
+cycle frequency is often limited by the valve; at least 95% of the cycles must
+have defined pressure differentials consistent with normotensive conditions for
+at least 5% of the cycle&amp;rsquo;s duration, and leaflet kinematics must be 
+consistent with those observed in the hydrodynamic assessment.
+&lt;/div&gt;
+
+&lt;div class=&#34;col-lg-3 col-4 align-self-center mt-lg-n5 px-lg-5&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;durability_testing.svg&#34; &gt;
+      &lt;img src=&#34;durability_testing.svg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;General Heart Valve Durability Testing Procedure&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;Hydrodynamic Assessment is done with more physiologically accurate speeds and conditions using equipment like Vivitro&#39;s Pulse Duplicator.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;h1 id=&#34;the-problem&#34;&gt;The Problem&lt;/h1&gt;
+&lt;p&gt;
+&lt;div class=&#34;row justify-content-center justify-md-content-center mb-n3 mb-lg-n5&#34;&gt;
+
+
+&lt;div class=&#34;col-12 col-lg-7&#34;&gt;
+
+High-speed video is an important part of durability testing; footage of 
+the heart valve must be regularly compared to footage taken in more 
+physiologically accurate conditions when tuning an AWT, inspecting for 
+damage, and observing the effects of wear. Therefore, providing a quick, consistent, and painless way to set up 
+and record high-speed video on the new AWT was an important part of 
+producing a compelling value proposition and positive user experience.
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-5 py-3 mt-lg-n5&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;Preliminary%20AWT%20Base%20Configuration.png&#34; &gt;
+      &lt;img src=&#34;Preliminary%20AWT%20Base%20Configuration.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Preliminary Accelerated Wear Tester Model&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;The base configuration of the AWT comprises of six physical testing units, one high-speed camera, a controller, and a data acquisition box. This base configuration can also be customized to include more controllers and testing units as requested.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;h2 id=&#34;objectives&#34;&gt;Objectives&lt;/h2&gt;
+&lt;p&gt;
+&lt;div class=&#34;row justify-content-middle mt-n3 mb-n4&#34;&gt;
+
+
+&lt;div class=&#34;col-lg-4 order-lg-0 col-6 order-2 px-lg-5 text-center offset-lg-0 offset-3 align-self-center mt-n3&#34;&gt;
+
+&lt;video preload=&#34;auto&#34; width=&#34;100% !important;&#34;  autoplay loop muted playsinline class=&#34;html-video&#34; style=&#34;border-radius: 2.5px;&#34;&gt;
+    &lt;source src=&#34;https://nigelswab.github.io/project/heart-valve-highspeed-camera-system/silicon_valve_slo_loop.mp4&#34; type=&#34;video/mp4&#34;&gt;
+  &lt;span&gt;Your browser doesn&#39;t support embedded videos, but don&#39;t worry, you can &lt;a href=&#34;https://nigelswab.github.io/project/heart-valve-highspeed-camera-system/silicon_valve_slo_loop.mp4&#34;&gt;download it&lt;/a&gt; and watch it with your favorite video player!&lt;/span&gt;
+&lt;/video&gt;
+Silicon industrial valve (1/8
+&lt;sup&gt;th&lt;/sup&gt; speed @ 60FPS)
+&lt;/div&gt;
+
+&lt;div class=&#34;col-lg-4 order-lg-1 col-sm-6 col-12 order-0&#34;&gt;
+
+
+
+      &lt;h3 style=&#34;text-align: center; &#34;&gt;Camera System&lt;/h3&gt;&lt;hr&gt;
+      &lt;ul style=&#34;margin-right: 0.5rem; margin-top: 0.5rem&#34;&gt;
+        &lt;li&gt; Take less than one minute to remove and install between units&lt;/li&gt;
+        &lt;li&gt; Consistently locate the camera relative to the valve&lt;/li&gt;
+        &lt;li&gt; Cost less than 500 USD for small production runs of around 10 units (excluding camera and camera lens)&lt;/li&gt;
+        &lt;li&gt; Capture the full width and depth of any aortic &lt;em&gt;or&lt;/em&gt; mitral valve with one lens &lt;/li&gt;
+      &lt;/ul&gt;
+    
+&lt;/div&gt;
+
+&lt;div class=&#34;col-lg-4 order-lg-2 col-sm-6 col-12 order-1&#34;&gt;
+
+
+
+      &lt;h3 style=&#34;text-align: center&#34;&gt;Light System&lt;/h3&gt;&lt;hr&gt;
+      &lt;ul style=&#34;margin-left: 0.5rem; margin-top: 0.5rem&#34;&gt;
+        &lt;li&gt; Sufficient light to illuminate a prosthetic heart valve when recording video at 817-1000 FPS&lt;/li&gt;
+        &lt;li&gt; Take less than 30 seconds to remove from a unit &lt;/li&gt;
+        &lt;li&gt; Illuminate the valve evenly with minimal shadows&lt;/li&gt;
+      &lt;/ul&gt;
+    
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+
+
+&lt;h3&gt;Additional Considerations&lt;/h3&gt;&lt;hr&gt;
+&lt;ul style=&#34;margin-top: 0.5rem;&#34;&gt;
+    &lt;li&gt;One of the primary design objectives of the new AWT is to provide exceptional valve visibility&lt;/li&gt;
+    &lt;li&gt;Corrosive saline solution spills are common and expected throughout durability testing&lt;/li&gt;
+    &lt;li&gt;Most users will be working with latex gloves on in a small laboratory setting&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;the-designs&#34;&gt;The Designs&lt;/h1&gt;
+&lt;p&gt;After defining the design objectives and constraints, I created concept 
+models using Solidworks while specifying a suitable lens for aortic valves.
+Since Vivitro also runs a testing lab, I was able to gain valuable 
+feedback and insight from end users throughout the design process.&lt;/p&gt;
+&lt;h2 id=&#34;camera-system&#34;&gt;Camera System&lt;/h2&gt;
+&lt;p&gt;
+&lt;div class=&#34;row justify-content-center align-items-center mb-n3&#34;&gt;
+
+
+&lt;div class=&#34;col-6 col-lg-4 px-lg-4 order-5 mt-lg-n5&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;https://www.aostechnologies.com/fileadmin/user_upload/Bilder/Process_Monitoring/AOS_PROMON_U750.png&#34; &gt;
+      &lt;img src=&#34;https://www.aostechnologies.com/fileadmin/user_upload/Bilder/Process_Monitoring/AOS_PROMON_U750.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;&lt;a href=&#39;https://www.aostechnologies.com/fileadmin/user_upload/PDFs/Process_Monitoring/AOS_Promon_U1000_en_2017_web.PDF&#39; target=&#39;_blank&#39;&gt;AOS PROMON U1000&lt;/a&gt;&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;Before I joined Vivitro, the PROMON U1000 high-speed camera was specified for the new AWT.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-12 col-lg-8 mt-lg-n5&#34;&gt;
+
+The specification of a camera lens and the design of the camera mounting 
+were done in parallel since they were collectively responsible for ensuring
+that high-speed video of the prosthetic valves could be properly framed and
+recorded.
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;h3 id=&#34;camera-lens&#34;&gt;Camera Lens&lt;/h3&gt;
+&lt;p&gt;
+&lt;div class=&#34;row justify-content-center justify-md-content-center mt-n2 mb-n2&#34;&gt;
+
+
+&lt;div class=&#34;col-12 col-lg-7&#34;&gt;
+
+
+&lt;div class=&#34;row mb-n3&#34;&gt;
+
+
+&lt;div class=&#34;col-12&#34;&gt;
+
+Several factors related to the camera, camera mounting, and prosthetic
+valves had to be considered when specifying a lens, including:&lt;br&gt;
+&lt;/div&gt;
+
+&lt;div class=&#34;col-4 my-n2&#34;&gt;
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Object Distance&lt;/li&gt;
+&lt;li&gt;Camera Resolution 
+&lt;/div&gt;
+
+&lt;div class=&#34;col-4 mt-2&#34;&gt;
+&lt;/li&gt;
+&lt;li&gt;F-stop/Aperture&lt;/li&gt;
+&lt;li&gt;Focal Length
+&lt;/div&gt;
+
+&lt;div class=&#34;col-4 mt-2&#34;&gt;
+&lt;/li&gt;
+&lt;li&gt;Depth of Field&lt;/li&gt;
+&lt;li&gt;Width of Field
+&lt;/div&gt;
+&lt;/div&gt;
+It was found that lenses capable of capturing both aortic and mitral 
+valves were large and expensive. Since most customers tend to 
+specialize in one of aortic or mitral valves, it was decided that a 
+separate lens would be specified for each valve.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;
+&lt;br&gt;&lt;b&gt;&lt;a href=&#39;Camera Lens Determination - NS.pdf&#39; target=&#39;_blank&#39;&gt;Click here for documentation on the aortic lens specification process.&lt;/a&gt;&lt;/b&gt;
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-5&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;camera_lens.PNG&#34; &gt;
+      &lt;img src=&#34;camera_lens.PNG&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;&lt;a href=&#39;https://vst.co.jp/en/machine-vision-lenses-en/vs-lda-series/&#39; target=&#39;_blank&#39;&gt;VS-LDA20&lt;/a&gt;&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;The VS-LDA20 was chosen as the specified aortic valve lens. While remaining relatively inexpensive, this 20 mm focal length lens provided enough adjustability to capture the full width and depth of field for all aortic valves when used in combination with the camera mount&#39;s vertical adjustability&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;h3 id=&#34;camera-mounting&#34;&gt;Camera Mounting&lt;/h3&gt;
+&lt;p&gt;While specifying lenses, I generated several design concepts with 
+SolidWorks and reviewed them with the R&amp;amp;D and lab testing teams. 
+A number of these concepts can be seen below, including one with
+three variations:
+
+&lt;div class=&#34;row justify-content-center mb-lg-n3&#34;&gt;
+
+
+&lt;div class=&#34;col-8 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;mounting_concepts/Concept%201.png&#34; &gt;
+      &lt;img src=&#34;mounting_concepts/Concept%201.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Concept 1 - Pillow Block&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;An aluminum rod is clamped by two pillow blocks that are mounted to the AWT&#39;s lower valve chamber. This concept was developed so that the camera could also be mounted below the valve, an objective was removed after a discussion with lab staff revealed how infrequently this was needed.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;mounting_concepts/Concept%202a.png&#34; &gt;
+      &lt;img src=&#34;mounting_concepts/Concept%202a.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Concept 2A - Top Mounted (18mm)&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;This concept features &lt;a href=&#39;https://www.elesa-ganter.com/en/www/Tube-Clamp-Connectors--Base-plate-connector-clamps--GN162&#39; target=&#39;_blank&#39;&gt;base plate connector clamps&lt;/a&gt; mounted to each testing unit and an 18 mm rod that slots into each unit&#39;s back chamber. The intent behind this approach was for users to simply undo the base clamp and move the rod and camera together.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;mounting_concepts/Concept%202b.png&#34; &gt;
+      &lt;img src=&#34;mounting_concepts/Concept%202b.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Concept 2B -Top Mounted (20mm)&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;A combination of concern for mounting rigidity when exposed to the AWT&#39;s vibrations, and the existence of a camera mounting bracket at Vivitro compatible with 20 mm rods led me to design a variation of 2A with &lt;a href=&#39;https://www.elesa-ganter.com/en/www/products/tube-clamp-connectors--1/Tube-Clamp-Connectors--Base-plate-connector-clamps--GN163#sortby=0&amp;facetvalue=&#39; target=&#39;_blank&#39;&gt;this base connector clamp&lt;/a&gt; and a 20 mm rod.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt; &lt;br&gt;
+
+&lt;div class=&#34;col-8 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;mounting_concepts/Concept%202c.png&#34; &gt;
+      &lt;img src=&#34;mounting_concepts/Concept%202c.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Concept 2C - Back Mounted (18mm)&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;This version of Concept 2 opts for a &lt;a href=&#39;https://www.elesa.com/en/elesab2bstoreca/catalogue-cat-076-sales/tube-connectors-us--1/tube-connectors-for-linear-actuators-us--1/Connecting-clamps--Connecting-clamps-with-mounting-base--GN1451#sortby=0&amp;facetvalue=&#39; target=&#39;_blank&#39;&gt;flanged connector clamp&lt;/a&gt; mounted to the rear of the back chamber, but is functionally similar to concepts 2A and 2B. This design was created to offer an option that could be used with Vivitro&#39;s &lt;a href=&#39;https://vivitrolabs.com/product/pulse-duplicator/&#39; target=&#39;_blank&#39;&gt;Pulse Duplicator&lt;/a&gt;with minor modifications.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;mounting_concepts/Concept%203.png&#34; &gt;
+      &lt;img src=&#34;mounting_concepts/Concept%203.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Concept 3 - Automated Stage&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;By employing an automated stage, this option presents an ideal user experience. However, this concept was likely prohibitively expensive and difficult to execute in a way that allows the same level of modularity that the new AWT architecture will offer.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;p&gt;After several design reviews and concept iterations, it was decided 
+that each variation of Concept 2 would be refined and made 
+into prototypes for testing. Additionally, feedback from a Test 
+Engineer on vertical camera adjustment led me to introduce a 
+
+&lt;a href=&#34;https://www.novoflex.de/en/products-637/macro/extension-bellows/universal-bellows-bal-f/CASTEL-MINI_II_en.html&#34; target=&#34;_blank&#34;&gt;Novoflex focusing rack&lt;/a&gt;
+as the primary method of adjusting the camera&amp;rsquo;s height.
+Lastly, I found the approximate natural frequency of the camera system,
+camera and Novoflex included, using hand calculations and a Solidworks simulation.&lt;/p&gt;
+&lt;p&gt;
+&lt;div class=&#34;row justify-content-center pt-2&#34;&gt;
+
+
+&lt;div class=&#34;col-8 col-md-6 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;mounting_concepts/novoflex_focus_rack.png&#34; &gt;
+      &lt;img src=&#34;mounting_concepts/novoflex_focus_rack.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;&lt;a href=&#39;https://www.novoflex.de/en/products-637/macro/extension-bellows/universal-bellows-bal-f/CASTEL-MINI_II_en.html&#39; target=&#39;_blank&#39;&gt;Novoflex CASTEL-MINI II Focusing Rack&lt;/a&gt;&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;This manual focusing rack allows for easy and consistent camera height alteration that cover the full range of adjustment needed for most aortic valve sizes with the lens specified above.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-md-6 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;mounting_concepts/Concept%202%20Refined.png&#34; &gt;
+      &lt;img src=&#34;mounting_concepts/Concept%202%20Refined.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Refined Concept 2A Model&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;As can be seen, the Novoflex focusing rack was integrated and a bracket that clamps onto the rod was designed.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class=&#34;row justify-content-center pt-2&#34;&gt;
+
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit md&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;mounting_concepts/SW_vib_sim.png&#34; &gt;
+      &lt;img src=&#34;mounting_concepts/SW_vib_sim.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Concept 2A SolidWorks Simulation&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;The undamped natural frequency of the camera system was calculated to be ~117 Hz, while the SolidWorks simulation resulted in ~119 Hz (camera and Novoflex mass lumped into the bracket&#39;s weight).&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;h2 id=&#34;lighting-system&#34;&gt;Lighting System&lt;/h2&gt;
+&lt;p&gt;
+&lt;div class=&#34;row justify-content-center mb-n2 mt-lg-n1&#34;&gt;
+
+
+&lt;div class=&#34;col-6 col-md-6 col-lg-4 mt-lg-n4 order-5 px-lg-5 &#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;light_concepts/LED.png&#34; &gt;
+      &lt;img src=&#34;light_concepts/LED.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;&lt;a href=&#39;https://www.digikey.ca/en/product-highlight/c/cree/xm-l2-leds&#39; target=&#39;_blank&#39;&gt;Cree XLamp XM-L2 LED&lt;/a&gt;&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;This LED was choosen for its high luminosity and thermal efficiency.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-12 col-md-6 col-lg-8&#34;&gt;
+
+Each frame&amp;rsquo;s exposure time is extremely short when recording high-speed video; 
+the higher the frame-rate, the more light
+required to capture clear images. To ensure the AWT had
+sufficient lighting for video recording at 1000 FPS, an 
+electrical engineering co-op student and I collaborated on the design 
+and implementation of a lighting system. 
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;h3 id=&#34;light-mounting&#34;&gt;Light Mounting&lt;/h3&gt;
+&lt;p&gt;Working together on form factor, the other co-op student designed the PCB 
+while I primarily focused on its mounting. Much like with camera
+mounting, a number of concepts were generated and reviewed.&lt;/p&gt;
+&lt;p&gt;
+&lt;div class=&#34;row justify-content-center mb-lg-n3&#34;&gt;
+
+
+&lt;div class=&#34;col-8 col-md-6 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;light_concepts/light_concept_1_43.png&#34; &gt;
+      &lt;img src=&#34;light_concepts/light_concept_1_43.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Concept 1 - Simple Ring&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;Attaching to a bracket for modularity, this concept was kept relatively simple to allow for the majority of machining to take place in one operation on a lathe. This concept was made out of aluminum and was inteded to act as a heat sink for the PCB.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-md-6 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;light_concepts/light_concept_2_43.png&#34; &gt;
+      &lt;img src=&#34;light_concepts/light_concept_2_43.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Concept 2 - Camera System Mounted&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;Clamping onto the camera mounting rod, this concept was designed to be vacuum cast out of acetyl and moved between testing units with the high-speed camera.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-md-6 col-lg-4 &#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;light_concepts/light_concept_3_43.png&#34; &gt;
+      &lt;img src=&#34;light_concepts/light_concept_3_43.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Concept 3 - Valve Chamber Mounted&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;Resting on the top of the angled valve chamber, this concept was designed to be vacuum cast out of acytal much like Concept 2. However, this design was made with the intent of outfitting a light to each testing unit.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;p&gt;While concept 1 was designed to be made using conventional machining methods, 
+concepts 2 and 3 were originally designed for 3D printing. However,
+once it was decided that concepts 2 and 3 would be made for testing, the
+designs were modified to be compatible with conventional machining methods
+and vacuum casting at production scale.&lt;/p&gt;
+&lt;h3 id=&#34;heat-management&#34;&gt;Heat Management&lt;/h3&gt;
+&lt;p&gt;
+&lt;div class=&#34;row justify-content-center mt-n2&#34;&gt;
+
+
+&lt;div class=&#34;col-6 col-lg-3 order-5 mt-3 mt-lg-n4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;light_concepts/light_pcb_render_iso.png&#34; &gt;
+      &lt;img src=&#34;light_concepts/light_pcb_render_iso.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Light Ring PCB Model&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;This PCB was made with 6 and 12 LED variations.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-12 col-lg-9&#34;&gt;
+
+Given the intensity of the light being generated, the electrical 
+engineering co-op and I also worked on design considerations for
+managing the heat created by the LED&amp;rsquo;s. We used thermal pad kickouts 
+in conjunction with an aluminum backing board to help distribute and
+dissipate heat. Additionally, the light mounting included cutouts that
+expose the PCB backing to the air to aid with heat dissipation. However, 
+to reduce the potential for burns, these cutouts were made too small for 
+fingers to fit through.
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;h1 id=&#34;the-results&#34;&gt;The Results&lt;/h1&gt;
+&lt;p&gt;Prototypes of each camera mounting concept, along with each light
+mounting, were successfully manufactured and assembled.
+
+&lt;div class=&#34;row justify-content-center mb-lg-n3&#34;&gt;
+
+
+&lt;div class=&#34;col-8 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;Results/proto-extend.png&#34; &gt;
+      &lt;img src=&#34;Results/proto-extend.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;AWT Prototype with Light Mount Concept 2&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;&lt;br&gt;Camera Mounting: Concept 2A &lt;br&gt;Light Mounting: Concept 2&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;Results/light_mount_prototypes.jpg&#34; &gt;
+      &lt;img src=&#34;Results/light_mount_prototypes.jpg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Light Mounting Prototypes&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;&lt;br&gt;Concept 2 (left) and Concept 3 (Right)&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;featured.png&#34; &gt;
+      &lt;img src=&#34;featured.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;AWT with Light Mount Concept 3&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;&lt;br&gt;Camera Mounting: Concept 2A &lt;br&gt;Light Mounting: Concept 3&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt; &lt;br&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;h2 id=&#34;field-width-and-depth-of-field&#34;&gt;Field Width and Depth of Field&lt;/h2&gt;
+&lt;p&gt;To confirm that the camera lens, focusing rack, and lighting were 
+collectively capable of capturing the full range of aortic valve 
+sizes, a test marker was designed and 3D printed with the largest and
+smallest expected diameters and depths of prosthetic aortic valves. As can 
+be seen by the frames taken from a high-speed video recording below, 
+the camera mounting system provides sufficient adjustability to capture the 
+full range of aortic valves.&lt;/p&gt;
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;Results/field_and_focus_test.svg&#34; &gt;
+      &lt;img src=&#34;Results/field_and_focus_test.svg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Field Width and Depth of Field Test Results&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;The AOS focusing tool overlay highlights details deemed to be in-focus. As can be seen, both the high points (the edges of each ring), and the base are within focus, confirming that there&#39;s sufficient depth of field.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Since prosthetic mitral valve dimensions tend to vary less than those 
+of aortic valves, it was determined that the camera mounting system 
+provided sufficient adjustability to also accommodate most mitral valves, 
+given a properly specified lens.&lt;/p&gt;
+&lt;h2 id=&#34;camera-transfer-speed-and-frame-repeatability&#34;&gt;Camera Transfer Speed and Frame Repeatability&lt;/h2&gt;
+&lt;p&gt;Testing of the camera mounting system&amp;rsquo;s transfer speed 
+and frame repeatability was done in parallel.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;It was found that it took an average of 42 seconds over five
+tests to remove and re-install the camera.&lt;/li&gt;
+&lt;li&gt;It was also found that the camera mounting system reliably 
+located the camera relative to the test valve, as shown below.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;Results/repeatability_test.svg&#34; &gt;
+      &lt;img src=&#34;Results/repeatability_test.svg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Frame Location Repeatability Test Results&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;The red marker remained on the same pixels for all repeatability testing.  Since there is only one prototype unit, the potential for tolerance stack-up between components could not be tested, however, the maximum offset due to this was calculated to be 1 mm, or 0.05% of a small aortic valve’s diameter. Therefore, it was determined that tolerance stack-up is not a large concern, especially relative to the tolerances on the valve holders.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+
+ &lt;br&gt; &lt;/p&gt;
+&lt;h2 id=&#34;image-stability&#34;&gt;Image Stability&lt;/h2&gt;
+&lt;p&gt;To test the stiffness/stability of the camera mounting system, the AWT 
+was set to frequencies between 10 and 35 Hz in 5 Hz steps. Since the 
+AWT’s natural frequency was found to be 22Hz, this frequency was 
+also tested. Given time constraints, I was unable to quantify the amplitude of
+vibrations captured in high-speed video. Therefore, qualitative notes
+were taken and summarized below. All configurations failed to provide adequate 
+stability throughout the expected operational range.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Excitation Frequency (Hz)&lt;/th&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Standard 18 mm Configuration&lt;/th&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;18mm Rod with Pulse Duplicator Bracket&lt;/th&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;20 mm Rod with Pulse Duplicator Bracket&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;10&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Stable&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Stable&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Stable&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;15&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Fairly stable&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Fairly stable&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Fairly stable&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;20&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Somewhat stable&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Somewhat stable&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Somewhat stable&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;22&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Small vibration noticeable&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Small vibration noticeable&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Somewhat stable&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;25&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Vibration noticeable&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Vibration noticeable&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Small vibration noticeable&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;30&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Significant vibration noticeable&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Significant vibration noticeable&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Vibration Visible&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;35&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Significant vibration noticeable&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Significant vibration noticeable&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Significant vibration noticeable&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;cost&#34;&gt;Cost&lt;/h2&gt;
+&lt;p&gt;When ordering prototype parts, quotes for a low-production run of 10 
+AWT&amp;rsquo;s with the base configuration of six testing units were acquired.
+While the final cost is well below the goal of $500, it&amp;rsquo;s worth noting 
+that the camera mounting adapter and rod designs will be 
+simplified for the final product, further reducing costs.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Part&lt;/th&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Cost (USD)&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Novoflex CASTEL-Mini II Focusing Rack&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;$   200.00&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;GN 162-B18-2-BL - Flanged Bracket&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;$   17.56&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;AWT – High Speed Camera Mounting Plate&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;$   35.35&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;AWT – High Speed Camera Mount Adapter&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;$   75.09&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;AWT – Camera Mounting Rod – 18mm&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;$   64.62&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;&lt;strong&gt;Total&lt;/strong&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;&lt;strong&gt;$   392.61&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;lighting&#34;&gt;Lighting&lt;/h2&gt;
+&lt;p&gt;Testing was then done to ensure the light ring could provide sufficient
+light to properly illuminate a dark test valve at 1000 FPS and f-stop 16.
+Additionally, temperatures were monitored to ensure the PCB remains
+sufficiently cool while operating with its maximum light output.&lt;/p&gt;
+&lt;p&gt;
+&lt;div class=&#34;row justify-content-center&#34;&gt;
+
+
+&lt;div class=&#34;col-8 col-md-6 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;Results/lighting.png&#34; &gt;
+      &lt;img src=&#34;Results/lighting.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Bovine Tissue Aortic Valve - 12 LED Ring&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;Both 6 and 12 LED light rings provided sufficient light (with no shadows) to view prosthetic valve details with the least favorable camera setup for light. &lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-md-6 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;Results/light_ring_heat.jpg&#34; &gt;
+      &lt;img src=&#34;Results/light_ring_heat.jpg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;IR Camera Readings&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;Peak temperatures were monitored using a FLIR IR camera. Notice that while the PCB backing is quite hot, the mounting remains cool enough to comfortably handle.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class=&#34;row justify-content-center mb-lg-n3&#34;&gt;
+
+
+&lt;div class=&#34;col-8 col-md-6 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;Results/pcb_heating.png&#34; &gt;
+      &lt;img src=&#34;Results/pcb_heating.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;After 30 minutes of operation in a room ~22.8 °C, temperatures appeared to stabilize around 109 °C.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-md-6 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;Results/pcb_cooling.png&#34; &gt;
+      &lt;img src=&#34;Results/pcb_cooling.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;After the light was turned off, the PCB&#39;s temperature rapidly declined, reaching ambient temperature in around 15 minutes.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;p&gt;As can be seen above, while PCB temperatures remained low enough to avoid 
+damaging the acetyl mounts, they still rose fairly high. However, 
+the light output tested is rarely required for even high-speed video capture, 
+thus it is unlikely that the peak temperatures seen will even be approached 
+in normal operation. Nonetheless, it was advised that a timer be programmed to
+turn off the lights when operating at high output for over 10-15 minutes
+to reduce the risk of a fire or AWT damage.&lt;/p&gt;
+&lt;h1 id=&#34;conclusion-and-recommendations&#34;&gt;Conclusion and Recommendations&lt;/h1&gt;
+&lt;p&gt;Following the testing of the camera and lighting systems, along with 
+the first AWT prototype, I worked with another engineer to introduce 
+several modifications to the design of all three. The major changes to
+the camera and light mounting are summarized below:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Updates to the design of the AWT significantly reduced the required
+camera mounting rod length, improving image stability.
+&lt;ul&gt;
+&lt;li&gt;This also meant that the same camera mounting prototype could be 
+used to test camera stability.&lt;/li&gt;
+&lt;li&gt;The 18 mm rod variant of Concept 2 was chosen and its mounting 
+location on the AWT was centered.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;It was decided that each AWT testing unit will come with a dedicated 
+light, so the Concept 3 (chamber mounted) design was refined.
+&lt;ul&gt;
+&lt;li&gt;Updates to the AWT&amp;rsquo;s valve chamber allowed the light ring mount to be 
+simplified to a ring with three locating nubs and a flat.&lt;/li&gt;
+&lt;li&gt;Black acetyl was chosen in response to the amount of light that bled 
+through the white acetyl prototypes.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;
+&lt;div class=&#34;row justify-content-center align-items-center&#34;&gt;
+
+
+&lt;div class=&#34;col-8 col-md-6 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;mounting_concepts/Concept%202.1.png&#34; &gt;
+      &lt;img src=&#34;mounting_concepts/Concept%202.1.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Refined Camera Mounting Prototype Model&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;Some vertical adjustability beyond the Novoflex focusing rack left to allow for easy handling and modularity.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-md-6 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;light_concepts/light_concept_4_model.PNG&#34; &gt;
+      &lt;img src=&#34;light_concepts/light_concept_4_model.PNG&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Refined Light Mount Prototype Model&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;It was decided that each testing unit should get a light, thus the chamber mounted concept (Concept 3) was refined and modified to interface with the updated AWT valve chamber.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-md-6 col-lg-3&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;light_concepts/light_concept_4.png&#34; &gt;
+      &lt;img src=&#34;light_concepts/light_concept_4.png&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Refined Light Mount Prototype&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;The refined light mount was made after I left Vivitro. However, I was told it worked well.&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;p&gt;Within the last week of my co-op, we successfully submitted drawings to a 
+manufacturer to be made over the holiday break. Additionally, before leaving, 
+I calculated and suggested a target spring rate for vibration isolating feet 
+to reduce the amplitude of vibrations observed by the AWT when in operation, 
+especially at 22 Hz.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;
+&lt;a href=&#34;Work Term 4 Final Report - Camera Mount Design.pdf&#34; target=&#34;_blank&#34;&gt;Full report on camera mounting here&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

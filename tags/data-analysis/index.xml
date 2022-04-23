@@ -1,0 +1,1081 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>data-analysis on Nigel Swab</title>
+    <link>https://nigelswab.github.io/tags/data-analysis/</link>
+    <description>Recent content in data-analysis on Nigel Swab</description>
+    <generator>Source Themes academia (https://sourcethemes.com/academic/)</generator>
+    <language>en-us</language>
+    <copyright>Copyright &amp;copy; {year}</copyright>
+    <lastBuildDate>Fri, 06 Aug 2021 00:00:00 +0000</lastBuildDate>
+    
+	    <atom:link href="https://nigelswab.github.io/tags/data-analysis/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Thrust Tester Load Investigation</title>
+      <link>https://nigelswab.github.io/project/thrust_tester_load_investigation/</link>
+      <pubDate>Fri, 06 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://nigelswab.github.io/project/thrust_tester_load_investigation/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Disclaimer:&lt;/strong&gt; &lt;em&gt;This was internal documentation that has been converted
+from Zaber&amp;rsquo;s internalwiki. Some information may have been removed, and
+references to other wiki pages are not publicly available. This 
+page may also contain some odd formatting.&lt;/em&gt;&lt;/p&gt;
+&lt;h1 id=&#34;devr-test-and-fixturelrt-thrust-speed2021-08-06---thrust-speed-high-speed-load-logging-investigation&#34;&gt;Dev/R-Test and Fixture/LRT Thrust Speed/2021-08-06 - Thrust Speed High Speed Load Logging Investigation&lt;/h1&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Product&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;R-Test and Fixture&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Test Attributes&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Thrust&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Tester&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Nigel&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Plan Reviewed by&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Nathan P&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Report Reviewed by&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Nathan P&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Test Date&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;2021-08-06&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;abstract&#34;&gt;Abstract&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;While improving our thrust testing setup, we decided to evaluate how peak thrust for a given test speed is determined&lt;/li&gt;
+&lt;li&gt;It was found that an average thrust from a successful pass provides a more representative peak thrust value than the minimum thrust from a successful pass given cyclical thrust fluctuations
+&lt;ul&gt;
+&lt;li&gt;It was also found that the LRT Thrust Tester provided less thrust fluctuation than the LST Thrust tester, essentially eliminating larger thrust oscillations&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;It&amp;rsquo;s recommended that the testing team continue to log high speed thrust passes to gather more data and investigate any odd fluctuations further&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;We are currently in the process of improving our thrust speed tester/setup&lt;/li&gt;
+&lt;li&gt;Currently, the maximum thrust for a given speed is determined by taking the minimum load recorded in a successful thrust pass
+&lt;ul&gt;
+&lt;li&gt;However, this may not be an ideal way of determining a stages thrust capacity at a given speed&lt;/li&gt;
+&lt;li&gt;Therefore, the standard thrust speed script was modified to create &amp;ldquo;high speed logs&amp;rdquo; of the recorded load cell reading and elapsed time throughout the loop in the &amp;ldquo;move_and_detect_stall&amp;rdquo; method
+&lt;ul&gt;
+&lt;li&gt;Results of the highest recorded successful pass, and the stalling pass, will be published in Resulty&lt;/li&gt;
+&lt;li&gt;Depending on results, future modifications to the script may be made to include the ability to record high speed logs of either successful or stalling passes based on the settings defined by the config file&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;The LRT thrust tester has been modified to resemble the LST thrust tester (converted to peripheral) and now uses the same Python script
+&lt;ul&gt;
+&lt;li&gt;LRT&amp;rsquo;s should provide improved thrust testing capacity (speed, load, and travel) over the LST&amp;rsquo;s&lt;/li&gt;
+&lt;li&gt;It may be interesting to evaluate if there is any difference between load variation on the LRT vs. the LST thrust tester&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;purpose&#34;&gt;Purpose&lt;/h2&gt;
+&lt;hr&gt;
+&lt;p&gt;To gather data and evaluate the determination of maximum thrust in our thrust_speed.py scripts&lt;/p&gt;
+&lt;h2 id=&#34;method&#34;&gt;Method&lt;/h2&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;equipment&#34;&gt;Equipment&lt;/h3&gt;
+&lt;table&gt;
+&lt;colgroup&gt;
+&lt;col style=&#34;width: 39%&#34; /&gt;
+&lt;col style=&#34;width: 60%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th colspan=&#34;2&#34;&gt;&lt;strong&gt;Test Equipment&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Devices:&lt;/td&gt;
+&lt;td&gt;&lt;ul&gt;
+&lt;li&gt;
+X-LSM200B-E03 - 55350
+&lt;/li&gt;
+&lt;li&gt;
+X-LSQ150D-E01 - 60493
+&lt;/li&gt;
+&lt;li&gt;
+X-LSQ600A-E01 - 50144
+&lt;/li&gt;
+&lt;/ul&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;Firmware&lt;/td&gt;
+&lt;td&gt;&lt;ul&gt;
+&lt;li&gt;
+LSM - 6.32.1601
+&lt;/li&gt;
+&lt;li&gt;
+LSQ - 7.22.10079
+&lt;/li&gt;
+&lt;/ul&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Load Cell:&lt;/td&gt;
+&lt;td&gt;250 lbs&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;Spring Assembly #:&lt;/td&gt;
+&lt;td&gt;&lt;ul&gt;
+&lt;li&gt;
+LSM200B: # 3 - 120 N
+&lt;/li&gt;
+&lt;li&gt;
+LSQ150D: # 3 - 120 N
+&lt;/li&gt;
+&lt;li&gt;
+LSQ600A: #1 - 817 N
+&lt;/li&gt;
+&lt;/ul&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Power Supply:&lt;/td&gt;
+&lt;td&gt;White BK Precision&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;settings&#34;&gt;Settings&lt;/h3&gt;
+&lt;table&gt;
+&lt;colgroup&gt;
+&lt;col style=&#34;width: 49%&#34; /&gt;
+&lt;col style=&#34;width: 50%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th colspan=&#34;2&#34;&gt;&lt;strong&gt;Test Settings&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Closed Loop:&lt;/td&gt;
+&lt;td&gt;Enabled&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;Run current:&lt;/td&gt;
+&lt;td&gt;default&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Test Voltage (V):&lt;/td&gt;
+&lt;td&gt;48 V&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;Thrust limit (N):&lt;/td&gt;
+&lt;td&gt;Spring Maximum&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Speed range (mm/s):&lt;/td&gt;
+&lt;td&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;LSM: 2 - 100&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;LSQ150D: 2 - 100&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;LSQ600A: 2 - 53&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;Number of data points:&lt;/td&gt;
+&lt;td&gt;10&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Starting Force:&lt;/td&gt;
+&lt;td&gt;5 N&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;Fine Force Increment:&lt;/td&gt;
+&lt;td&gt;1 N&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;code&#34;&gt;Code&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://gitlab.izaber.com/testing/general_testing_scripts/blob/master/torque_and_thrust/LST_tester/thrust_speed.py&#34;&gt;&lt;u&gt;thrust_speed.py&lt;/u&gt;&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;Initial testing done/based off of LRT_thrust_high_speed branch with the commit hash of 78b8084b9a308a551bac0a268c6cc60abc716baf&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://gitlab.izaber.com/testing/general_testing_scripts/blob/master/torque_and_thrust/LST_tester/Default%20LST%20Thrust%20Speed%20Config.yaml&#34;&gt;&lt;u&gt;Default LST Thrust Speed Config.yaml&lt;/u&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;procedure&#34;&gt;Procedure&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; &lt;em&gt;I was unable to export this section from the wiki&lt;/em&gt;&lt;/p&gt;
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image1.jpeg&#34; &gt;
+      &lt;img src=&#34;media/image1.jpeg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Test Setup&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&#34;results-and-analysis&#34;&gt;Results and Analysis&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;To view the raw data from this report, search this page&amp;rsquo;s heading (Dev/R-Test and Fixture/LRT Thrust Speed/2021-08-06 - Thrust Speed High Speed Load Logging Investigation) in Resulty&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;initial-testing&#34;&gt;Initial Testing&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Initial testing showed cyclical fluctuations around a fairly consistent thrust value at each speed.
+&lt;ul&gt;
+&lt;li&gt;It was noted that these fluctuations were larger than desired, especially for the LSM, spurring further investigation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;It was also found that the recording speed through a thrust pass was too slow (0.2-0.4 seconds between readings)
+&lt;ul&gt;
+&lt;li&gt;As a result, the thrust_speed.py script was re-worked to increase reading speed&lt;/li&gt;
+&lt;li&gt;A normalized* thrust column was also added to aid with future comparisons/evaluations
+&lt;ul&gt;
+&lt;li&gt;Thrust was normalized by dividing each recorded thrust value by that passes average thrust value (not actual normalization)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Position of the stage was also added to the recorded value to aid with comparisons and evaluations&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;details-and-plots-for-initial-testing&#34;&gt;Details and Plots for Initial Testing&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Initial tests with the LST Thrust Tester show that load varies fairly significantly throughout a run, but tends to vary around a fairly consistent level
+&lt;ul&gt;
+&lt;li&gt;This means that an average of the pass, especially at lower speeds, is likely a better representation of the stages capabilities&lt;/li&gt;
+&lt;li&gt;This also means that it may be worth investigating methods to smooth/dampen the load variation throughout a pass
+&lt;ul&gt;
+&lt;li&gt;Too much fluctuation in load may cause premature stalls and result in lower representative results&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Initial testing also showed that stalls happened primarily at the start of the pass
+&lt;ul&gt;
+&lt;li&gt;These were all stage stalls, not load cell readings out of the threshold&lt;/li&gt;
+&lt;li&gt;This could be due to stalling during acceleration (in which case, acceleration can be decreased to attain sustained thrust)&lt;/li&gt;
+&lt;li&gt;This could also be due to simply overloading the stage, causing it to stall right away as it&amp;rsquo;s limit has been reached&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Subsequent testing was done with 5 data/speed points to reduce testing time and data &amp;ldquo;spam&amp;rdquo; in Resulty&lt;/li&gt;
+&lt;li&gt;It&amp;rsquo;s also notable that time between measurements is 0.2-0.4 seconds, which is much longer than ideal (as seen in LSQ150D testing)
+&lt;ul&gt;
+&lt;li&gt;This could lead to inaccurate or inconsistent measurements&lt;/li&gt;
+&lt;li&gt;This could also pose a problem for preventing damage to stages and load cells when stage stall detection is delayed&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;The script was updated/optimized for recording speed, as detailed in &lt;a href=&#34;https://iwiki.izaber.com/Dev/R-Test_and_Fixture/LRT_Thrust_Speed#2021-08-09_-_Move_and_Detect_Stall_Optimization&#34;&gt;&lt;u&gt;Dev/R-Test and Fixture/LRT Thrust Speed#2021-08-09 - Move and Detect Stall Optimization&lt;/u&gt;&lt;/a&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;The faster script was used for all testing after the initial LSQ150D testing&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;It&amp;rsquo;s likely reasonable to return the average load from a thrust pass that hasn&amp;rsquo;t stalled (instead of the minimum value)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;br&gt;
+&lt;h3 id=&#34;cyclical-fluctuation-investigation---lst-thrust-tester&#34;&gt;Cyclical Fluctuation Investigation - LST Thrust Tester&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Tests were run with the updated thrust_speed.py script (with improved recording speed, normalized thrust values, and stage position readings)&lt;/li&gt;
+&lt;li&gt;It was found that the oscillations in thrust strongly correlate with stage position for the LSM200B and LSQ600A
+&lt;ul&gt;
+&lt;li&gt;However, the larger oscillation&amp;rsquo;s frequency (relative to position) don&amp;rsquo;t seem to directly correlate with stage pitch&lt;/li&gt;
+&lt;li&gt;Interestingly, the LSQ150D also showed a larger frequency at low speeds that wasn&amp;rsquo;t seen at any other speed or stage&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;LST Thrust Tester Speed Comparison&lt;/strong&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;
+&lt;div class=&#34;row justify-content-center&#34;&gt;
+
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image2.gif&#34; &gt;
+      &lt;img src=&#34;media/image2.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;LSM200B&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image3.gif&#34; &gt;
+      &lt;img src=&#34;media/image3.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;LSQ150D&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image4.gif&#34; &gt;
+      &lt;img src=&#34;media/image4.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;LSQ600A&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;As can be seen below, it appears that the LSM200B and LSQ600A have a similar oscillations relative to stage position&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;This suggests that the thrust tester may be the cause of these oscillation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image5.gif&#34; &gt;
+      &lt;img src=&#34;media/image5.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;LST Thrust Tester Stage Comparison&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;ul&gt;
+&lt;li&gt;It was also confirmed that the springs did not have a large effect on oscillations:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image6.gif&#34; &gt;
+      &lt;img src=&#34;media/image6.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Spring Assembly Comparison&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;br&gt;
+&lt;h3 id=&#34;cyclical-fluctuation-investigation---lrt-thrust-tester&#34;&gt;Cyclical Fluctuation Investigation - LRT Thrust Tester&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;When these tests were repeated on the LRT thrust tester, a noticeable improvement in thrust fluctuation can be seen on the LSM (with only ±~2% thrust vs. ±~7%)
+&lt;ul&gt;
+&lt;li&gt;Larger oscillations on the LSQ&amp;rsquo;s seem to also be removed/reduced, but with much less magnitude than the LSM&lt;/li&gt;
+&lt;li&gt;The total span of thrust fluctuation actually remains fairly similar for the two LSQ&amp;rsquo;s, with a slight improvement on the LSQ150D&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;This further suggests that the larger oscillations seen previously were a result of the LST Thrust Tester&lt;/li&gt;
+&lt;li&gt;However, there does seem to be some odd random fluctuation occurring on the LSQ600A, causing a larger span of thrust fluctuation at lower speeds relative to the LST thrust tester
+&lt;ul&gt;
+&lt;li&gt;A follow-up (mini) investigation can be seen further below&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;LRT Thrust Tester Speed Comparison&lt;/strong&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;
+&lt;div class=&#34;row justify-content-center&#34;&gt;
+
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image7.gif&#34; &gt;
+      &lt;img src=&#34;media/image7.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;LSM200B&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image8.gif&#34; &gt;
+      &lt;img src=&#34;media/image8.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;LSQ150D&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image9.gif&#34; &gt;
+      &lt;img src=&#34;media/image9.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;LSQ600A&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;When comparing stages, there were no common frequencies were noticeable, suggesting that the LRT Thrust Tester does not introduce significant thrust fluctuation into the test results&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Interestingly, thrust fluctuation frequency with respect to position seemed to be inversely correlated to leadscrew pitch&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Honestly not sure what would be causing the fluctuations&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image13.gif&#34; &gt;
+      &lt;img src=&#34;media/image13.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;LRT Thrust Tester Stage Comparison&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;br&gt;
+&lt;h3 id=&#34;random-fluctuation-in-lsq600a---mini-investigation&#34;&gt;Random Fluctuation in LSQ600A - Mini Investigation&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;I initially speculated that the odd fluctuation in thrust seen on the LRT Thrust Tester when testing the LSQ600A is caused by the thrust tester
+&lt;ul&gt;
+&lt;li&gt;This is only really based on the fact that nothing similar was present in the other stages tested on the LRT thrust tester&lt;/li&gt;
+&lt;li&gt;However, the load is much higher for the LSQ600A, which may make a large difference&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Thinking that it may be due to how the stage was mounted on the breadboard, I repeated the test with two mounting methods/mounting block positions&lt;/li&gt;
+&lt;/ul&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Method 1&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Method 2&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image14.jpeg&#34; &gt;
+      &lt;img src=&#34;media/image14.jpeg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image15.jpeg&#34; &gt;
+      &lt;img src=&#34;media/image15.jpeg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;ul&gt;
+&lt;li&gt;However, it was found to have little to no effect on the results.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image16.gif&#34; &gt;
+      &lt;img src=&#34;media/image16.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Mounting Method Comparison&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Unfortunately, that brings me to the end of my co-op term, so further investigation will likely be needed
+&lt;ul&gt;
+&lt;li&gt;I would suggest that the testing team periodically records and analyses the high speed thrust logging while doing thrust tests in the future to gather more data&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;I have started a full travel test with LRT Thrust Tester position being recorded as well for more insight&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;It was found that using the average thrust from a successful pass likely provides a more representative peak thrust value for a stage than the lowest recorded thrust value
+&lt;ul&gt;
+&lt;li&gt;Changes in the script should be implemented to reflect this&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;It was also found that the LST thrust tester seemed to be introducing some larger cyclical thrust fluctuations
+&lt;ul&gt;
+&lt;li&gt;However, on the LRT thrust tester, there are only smaller fluctuations that are likely a combination of LRT thrust tester and test stage velocity stability.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;evaluation-and-recommendations&#34;&gt;Evaluation and Recommendations&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;High speed thrust passes should continue to be logged and monitored to gather more data
+&lt;ul&gt;
+&lt;li&gt;This may also provide insight on thrust&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>LSM Stiffness Test - Recirculating Bearing Stiffness for Specs</title>
+      <link>https://nigelswab.github.io/project/lsm-stiffness-test/</link>
+      <pubDate>Sat, 13 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://nigelswab.github.io/project/lsm-stiffness-test/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Disclaimer:&lt;/strong&gt; &lt;em&gt;This was internal documentation that has been converted
+from Zaber&amp;rsquo;s internalwiki. Some information may have been removed, and
+references to other wiki pages are not publicly available. This 
+page may also contain some odd formatting.&lt;/em&gt;&lt;/p&gt;
+&lt;h1 id=&#34;devr-lsm2021-03-13---recirculating-bearing-stiffness-for-specs&#34;&gt;Dev/R-LSM/2021-03-13 - Recirculating Bearing Stiffness for Specs&lt;/h1&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Product&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;R-LSM&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Test Attributes&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Stiffness&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Tester&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Nigel&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Plan Reviewed by&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Nathan P&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Report Reviewed by&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Nathan P&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Test Date&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;2021/04/21&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;abstract&#34;&gt;Abstract&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;The updated LSM design with recirculating bearings was tested for stiffness in pitch,roll, and yaw
+
+&lt;div class=&#34;lightbox image style1 right sm&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/yaw.jpg&#34; &gt;
+      &lt;img src=&#34;media/yaw.jpg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;&lt;a href=&#39;https://www.zaber.com/products/linear-stages/X-LSM&#39; target=&#39;_blank&#39;&gt;X-LSM025B&lt;/a&gt;&lt;/h2&gt;
+      
+      
+        &lt;p style=&#34;text-align: center&#34;&gt;The previous generation LSM&#39;s used cam follower bearings, as shown here&lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;5 stages were tested and all surpassed the recommended new specifications of 150 Nm/°&lt;/li&gt;
+&lt;li&gt;All stiffness testing results show there should be no issues increasing stiffness specifications to 150 Nm/°
+&lt;ul&gt;
+&lt;li&gt;However, I suspect 150 Nm/° may be fairly conservative for properly torqued stage top bolts, especially in pitch&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;The LSM has been redesigned with recirculating bearings&lt;/li&gt;
+&lt;li&gt;The installed rails are not from our new supplier (that should in theory be better)
+&lt;ul&gt;
+&lt;li&gt;We are using the &amp;ldquo;best bad rail&amp;rdquo; we have with the expectation that the new rail will be as good or better&lt;/li&gt;
+&lt;li&gt;When we get the production rail, we will exchange the rails in two stages and quickly retest them to confirm the specs from the old batch of rail are still valid.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;While these stages are 99.5% production ready, anything fishy should be noted&lt;/li&gt;
+&lt;li&gt;Mark has recommended updated specifications of 150 Nm/° here: &lt;a href=&#34;https://iwiki.izaber.com/Dev/R-LSM/Recirculating_Bearing_Design#2021-05-07_Published_Stiffness_Specs&#34;&gt;&lt;u&gt;https://iwiki.izaber.com/Dev/R-LSM/Recirculating_Bearing_Design#2021-05-07_Published_Stiffness_Specs&lt;/u&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Previous stiffness tests have been done with the new design consistently showing high stiffness:
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://iwiki.izaber.com/Dev/R-LSM/2020-07-28_-_Recirculating_Stiffness&#34;&gt;&lt;u&gt;https://iwiki.izaber.com/Dev/R-LSM/2020-07-28_-_Recirculating_Stiffness&lt;/u&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://iwiki.izaber.com/Dev/R-LSM/2020-11-16_-_Recirculating_Bearing_Stiffness&#34;&gt;&lt;u&gt;https://iwiki.izaber.com/Dev/R-LSM/2020-11-16_-_Recirculating_Bearing_Stiffness&lt;/u&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://iwiki.izaber.com/Dev/R-LSM/2021-01-05_-_High_Pre-Load_Recirculating_Stiffness&#34;&gt;&lt;u&gt;https://iwiki.izaber.com/Dev/R-LSM/2021-01-05_-_High_Pre-Load_Recirculating_Stiffness&lt;/u&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://iwiki.izaber.com/Dev/R-LSM/2021-01-27_-_Loaded_Recirc_Mid-Lifetime_Stiffness&#34;&gt;&lt;u&gt;https://iwiki.izaber.com/Dev/R-LSM/2021-01-27_-_Loaded_Recirc_Mid-Lifetime_Stiffness&lt;/u&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;purpose&#34;&gt;Purpose&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;Establish specs for the new LSM design with recirculating bearings&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;method&#34;&gt;Method&lt;/h2&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;equipment&#34;&gt;Equipment&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Test Equipment&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Devices:&lt;/td&gt;
+&lt;td&gt;See below&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Load cell&lt;/td&gt;
+&lt;td&gt;Omega 250 lb with U6 Labjack DAQ&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Measurement Device:&lt;/td&gt;
+&lt;td&gt;Heidenhain&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Forcing Stage:&lt;/td&gt;
+&lt;td&gt;A-LST0250A&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;LSM200B&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;LSM200B&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;LSM200B&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;X-LSM200A&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;X-LSM200A&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Motor/Controller Assembly&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;M-3PO&lt;/td&gt;
+&lt;td&gt;TT-40&lt;/td&gt;
+&lt;td&gt;TC-14&lt;/td&gt;
+&lt;td&gt;WAC-47&lt;/td&gt;
+&lt;td&gt;T3-M4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Base Assembly&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;R5-D4&lt;/td&gt;
+&lt;td&gt;ZZ-4Z&lt;/td&gt;
+&lt;td&gt;T3-H8&lt;/td&gt;
+&lt;td&gt;R2-KT&lt;/td&gt;
+&lt;td&gt;HK-47&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Lead Screw&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;C-21&lt;/td&gt;
+&lt;td&gt;0-0-0&lt;/td&gt;
+&lt;td&gt;2-1B&lt;/td&gt;
+&lt;td&gt;FA-4&lt;/td&gt;
+&lt;td&gt;GH-7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Device Name&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;M-3PO R5-D4 C-21&lt;/td&gt;
+&lt;td&gt;TT-40 ZZ-4Z 0-0-0&lt;/td&gt;
+&lt;td&gt;TC-14 T3-H8 2-1B&lt;/td&gt;
+&lt;td&gt;WAC-47 R2-KT FA-4&lt;/td&gt;
+&lt;td&gt;T3-M4 HK-47 GH-7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Serial Number&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;4000000029&lt;/td&gt;
+&lt;td&gt;4000000030&lt;/td&gt;
+&lt;td&gt;4000000031&lt;/td&gt;
+&lt;td&gt;4000000032&lt;/td&gt;
+&lt;td&gt;4000000034&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;settings&#34;&gt;Settings&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Test Settings&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Repetitions:&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Max Torque (Nm):&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Move Increment (µm):&lt;/td&gt;
+&lt;td&gt;15&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;code&#34;&gt;Code&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://gitlab.izaber.com/testing/general_testing_scripts/blob/master/stiffness/torsional_stiffness.py&#34;&gt;&lt;u&gt;torsional_stiffness.py&lt;/u&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://gitlab.izaber.com/testing/general_testing_scripts/blob/master/stiffness/Default_Stiffness_Config.yaml&#34;&gt;&lt;u&gt;Default_Stiffness_Config.yaml&lt;/u&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;procedure&#34;&gt;Procedure&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; &lt;em&gt;I was unable to export this section from the wiki&lt;/em&gt;
+
+&lt;div class=&#34;row justify-content-center&#34;&gt;
+
+
+&lt;div class=&#34;col-8 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/pitch.jpg&#34; &gt;
+      &lt;img src=&#34;media/pitch.jpg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Pitch Stiffness Setup&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/roll.jpg&#34; &gt;
+      &lt;img src=&#34;media/roll.jpg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Roll Stiffness Setup&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-4&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/yaw.jpg&#34; &gt;
+      &lt;img src=&#34;media/yaw.jpg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Yaw Stiffness Setup&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;h2 id=&#34;results-and-analysis&#34;&gt;Results and Analysis&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;All stages exceeded 150 Nm/° in pitch, roll, and stiffness&lt;/li&gt;
+&lt;li&gt;It was found that some stage tops had lower than spec torque on the bolts
+&lt;ul&gt;
+&lt;li&gt;Not all stage top bolts were checked for torque, therefore some results may be artificially low&lt;/li&gt;
+&lt;li&gt;Only the bolded results below were found after stage top bolts were torque to the specified 0.6 Nm&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Device Serial&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Pitch [Nm/°]&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Roll [Nm/°]&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Yaw [Nm/°]&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;4000000029&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;230.4&lt;/td&gt;
+&lt;td&gt;202.5&lt;/td&gt;
+&lt;td&gt;167.1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;4000000030&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;228&lt;/td&gt;
+&lt;td&gt;181.2&lt;/td&gt;
+&lt;td&gt;232.7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;4000000031&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;218.9&lt;/td&gt;
+&lt;td&gt;177.3&lt;/td&gt;
+&lt;td&gt;187&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;4000000032&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;234.3&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;156.5&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;199.2&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;4000000034&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;234.9&lt;/td&gt;
+&lt;td&gt;166.9&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;213.9&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Statistics&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;MAX&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;234.9&lt;/td&gt;
+&lt;td&gt;202.5&lt;/td&gt;
+&lt;td&gt;232.7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;MIN&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;218.9&lt;/td&gt;
+&lt;td&gt;156.5&lt;/td&gt;
+&lt;td&gt;167.1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Average&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;229.3&lt;/td&gt;
+&lt;td&gt;176.88&lt;/td&gt;
+&lt;td&gt;199.98&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Std. Deviation&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;5.79&lt;/td&gt;
+&lt;td&gt;15.4&lt;/td&gt;
+&lt;td&gt;22.4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;
+&lt;div class=&#34;row justify-content-center&#34;&gt;
+
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image1.gif&#34; &gt;
+      &lt;img src=&#34;media/image1.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Pitch Stiffness&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image2.gif&#34; &gt;
+      &lt;img src=&#34;media/image2.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Roll Stiffness&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image3.gif&#34; &gt;
+      &lt;img src=&#34;media/image3.gif&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Yaw Stiffness&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;&lt;/p&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;All stages surpassed the recommended stiffness of 150 Nm/°&lt;/li&gt;
+&lt;li&gt;These results, along with previous testing, suggest that 150 Nm/° stiffness would be a reasonable spec for pitch, roll, and yaw&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;evaluation-and-recommendations&#34;&gt;Evaluation and Recommendations&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;As noted, a couple of the stages were found to have stage top bolts below specified torque
+&lt;ul&gt;
+&lt;li&gt;Only the stages that had initial results significantly lower than expected had their bolts re-torqued&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Once final production models are being tested, it may be worth re-evaluating stiffness specs
+&lt;ul&gt;
+&lt;li&gt;I suspect that 150 Nm/° would be on the conservative side for properly torqued stage tops, especially in pitch&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;For future stiffness tests, it&amp;rsquo;s recommended that we use the laser cut breadboard blocks I made to consistently reposition the loading stage assembly (See below)
+&lt;ul&gt;
+&lt;li&gt;This saved me a lot of time once implemented due to the repetitive nature of testing 5 stages with 3 loading orientations&lt;/li&gt;
+&lt;li&gt;This has been added to the procedures
+
+&lt;div class=&#34;row justify-content-center&#34;&gt;
+
+
+&lt;div class=&#34;col-8 col-lg-6&#34;&gt;
+
+
+&lt;div class=&#34;lightbox image style1 fit&#34;&gt;
+  &lt;article&gt;
+    &lt;a class=&#34;image&#34; href=&#34;media/image4.jpeg&#34; &gt;
+      &lt;img src=&#34;media/image4.jpeg&#34; alt=&#34;&#34; /&gt;
+    &lt;/a&gt;
+    &lt;div class=&#34;caption&#34;&gt;
+      
+        &lt;h2&gt;Laser Cut Breadboard Blocks&lt;/h2&gt;
+      
+      
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
